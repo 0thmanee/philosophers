@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:43:03 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/24 11:03:33 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/24 20:47:53 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@ typedef struct s_program
 	sem_t			*forks;
 	sem_t			*message;
 	sem_t			*data;
+	sem_t			*eating;
+	pthread_t		eating_thread;
+	int				eating_times;
 	int 			session;
 }	t_program;
 
@@ -48,9 +51,9 @@ typedef struct s_philo
 	t_fork		*r_fork;
 	pthread_t	thread;
 	long long	last_meal;
-	int			eats;
 	t_program	*prog;
 	int			*dead;
+	int			eats;
 }	t_philo;
 
 long		ft_atoi(const char *str);

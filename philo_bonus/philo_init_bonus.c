@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:48:43 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/24 11:04:00 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/24 21:22:18 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,11 @@ t_program	init_data(int ac, char *av[])
 	sem_unlink("forks");
 	sem_unlink("message");
 	sem_unlink("data");
+	sem_unlink("eating_times");
 	data.forks = sem_open("forks", O_CREAT, 0600, data.nbr_philos);
 	data.message = sem_open("message", O_CREAT, 0600, 1);
 	data.data = sem_open("data", O_CREAT, 0600, 1);
+	data.eating = sem_open("eating_times", O_CREAT, 0600, data.nbr_philos);
 	return (data);
 }
 
@@ -46,7 +48,6 @@ t_philo	*init_philos(t_program data)
 		philos[i].dead = malloc(sizeof(int));
 		*(philos[i].dead) = 0;
 		philos[i].last_meal = curr_time();
-		philos[i].eats = 0;
 		i++;
 	}
 	return (philos);

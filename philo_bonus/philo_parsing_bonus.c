@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:45:49 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/23 22:24:24 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/24 19:49:35 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	check_args(int ac, char *av[])
 	int		i;
 
 	i = 0;
-	if (ac != 5)
+	if (ac < 5 || ac > 6)
 	{
 		display_helper();
 		exit(EXIT_FAILURE);

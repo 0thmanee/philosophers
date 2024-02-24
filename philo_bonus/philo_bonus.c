@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:42:06 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/24 11:04:53 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/24 21:22:25 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	*watcher_routine(void *philos)
 	while (1)
 	{
 		sem_wait(philo->prog->data);
+		if (philo->eats >= philo->prog->eating_times)
+			sem_post(philo->prog->eating);
 		if (curr_time() - philo->last_meal >= philo->prog->t_t_die)
 		{
 			*(philo->dead) = 1;
@@ -66,6 +68,18 @@ void	cleanup(t_program data, int *childs_id)
 	}
 }
 
+void *eating_times_routine(void *data)
+{
+	t_program	*prog;
+	int			i;
+
+	prog = (t_program *)data;
+	i = -1;
+	while (++i < prog->nbr_philos)
+		sem_wait(prog->eating);
+	exit(EXIT_SUCCESS);
+}
+
 int	main(int ac, char *av[])
 {
 	t_program	data;
@@ -82,6 +96,9 @@ int	main(int ac, char *av[])
 	if (!childs_id)
 		exit(EXIT_FAILURE);
 	i = -1;
+	// if (pthread_create(&data.eating_thread, NULL, eating_times_routine, (void *)&data))
+	// 	exit(EXIT_FAILURE);
+	// pthread_detach(data.eating_thread);
 	while (++i < data.nbr_philos)
 	{
 		id = fork();
