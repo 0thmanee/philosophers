@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:43:03 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/24 20:47:53 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/25 14:47:20 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_program
 	pthread_t		eating_thread;
 	int				eating_times;
 	int 			session;
+	int				*childs_id;
 }	t_program;
 
 typedef struct s_philo
