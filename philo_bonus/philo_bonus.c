@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:42:06 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/25 15:41:10 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/26 06:18:43 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,16 @@ void	*watcher_routine(void *philos)
 	while (1)
 	{
 		sem_wait(philo->prog->data);
-		if (philo->prog->eating_times != -1 &&
-			philo->eats > philo->prog->eating_times)
-			sem_post(philo->prog->eating);
 		if (curr_time() - philo->last_meal >= philo->prog->t_t_die)
 		{
 			*(philo->dead) = 1;
 			custom_printf(philo, "died",
 				calc_time_diff(philo->prog), philo->philo_id);
-			exit(EXIT_SUCCESS);
+			exit(EXIT_FAILURE);
 		}
+		if (philo->prog->eating_times != -1 &&
+			philo->eats >= philo->prog->eating_times)
+			exit(EXIT_SUCCESS);
 		sem_post(philo->prog->data);
 	}
 	return (NULL);
@@ -43,9 +43,19 @@ int	start_simulation(t_philo *philos, int id)
 	pthread_detach(philos[id].thread);
 	while (1)
 	{
+		if (philos->prog->nbr_philos == 1)
+		{
+			custom_usleep(philos->prog->t_t_die);
+			custom_printf(philos, "died",
+				calc_time_diff(philos->prog), philos->philo_id);
+			exit(EXIT_SUCCESS);
+		}
 		thinking(philos);
 		eating(philos);
 		sleeping(philos);
+		if (philos->prog->eating_times != -1 &&
+		philos->eats >= philos->prog->eating_times)
+		exit(EXIT_FAILURE);
 	}
 	return (1);
 }
@@ -59,37 +69,32 @@ int	start_child_process(t_philo *philo, int index)
 	return 1;
 }
 
-void	cleanup(t_program data, int mode)
+void start_sumulation(t_program	prog, t_philo *philos, int i)
 {
-	int i;
+	int			status;
+	int			id;
 
-	i = -1;
-	if (mode == 1 || wait(NULL) != -1)
+	while (++i < prog.nbr_philos)
 	{
-		while (++i < data.nbr_philos)
-			kill(data.childs_id[i], SIGKILL);
+		id = fork();
+		if (id == -1)
+			exit(EXIT_FAILURE);
+		if (id == 0 && !start_child_process(&philos[i], i))
+			exit(EXIT_FAILURE);
+		else if (id != 0)
+			prog.childs_id[i] = id;
 	}
-	sem_close(data.forks);
-	sem_close(data.message);
-	sem_close(data.data);
-	sem_close(data.eating);
-	sem_unlink("forks");
-	sem_unlink("message");
-	sem_unlink("data");
-	sem_unlink("eating_times");
-	free(data.childs_id);
-}
-
-void *eating_times_routine(void *data)
-{
-	t_program	*prog;
-	int			i;
-
-	prog = (t_program *)data;
 	i = -1;
-	while (++i < prog->nbr_philos)
-		sem_wait(prog->eating);
-	cleanup(*prog, 1);
+	while (++i < prog.nbr_philos)
+	{
+		waitpid(prog.childs_id[i], &status, 0);
+		if (status)
+		{
+			i = -1;
+			while (i++ < prog.nbr_philos)
+				kill(prog.childs_id[i], SIGINT);
+		}
+	}
 	exit(EXIT_SUCCESS);
 }
 
@@ -98,8 +103,7 @@ int	main(int ac, char *av[])
 	t_program	data;
 	t_philo		*philos;
 	int			i;
-	int			id;
-	
+
 	(1 == 1) && (check_args(ac, av), data = init_data(ac, av),
 		philos = init_philos(data), data.childs_id = NULL);
 	if (!philos)
@@ -107,19 +111,9 @@ int	main(int ac, char *av[])
 	data.childs_id = malloc(data.nbr_philos * sizeof(int));
 	if (!data.childs_id)
 		exit(EXIT_FAILURE);
+	start_sumulation(data, philos, -1);
 	i = -1;
-	if (pthread_create(&data.eating_thread, NULL, eating_times_routine, (void *)&data))
-		exit(EXIT_FAILURE);
-	pthread_detach(data.eating_thread);
-	while (++i < data.nbr_philos)
-	{
-		id = fork();
-		if (id == -1)
-			exit(EXIT_FAILURE);
-		if (id == 0 && !start_child_process(&philos[i], i))
-			exit(EXIT_FAILURE);
-		else if (id != 0)
-			data.childs_id[i] = id;
-	}
-	(cleanup(data, 0), exit(EXIT_SUCCESS));
+	while (i++ < data.nbr_philos)
+		kill(data.childs_id[i], SIGINT);
+	exit(EXIT_SUCCESS);
 }

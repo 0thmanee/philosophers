@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:43:03 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/25 14:47:20 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/25 18:25:59 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_program
 	sem_t			*message;
 	sem_t			*data;
 	sem_t			*eating;
+	sem_t			*stop;
 	pthread_t		eating_thread;
 	int				eating_times;
 	int 			session;
