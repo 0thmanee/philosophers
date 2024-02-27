@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:45:49 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/24 19:49:35 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/27 03:11:13 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,10 @@ long	ft_atoi(const char *str)
 	int		i;
 	int		sign;
 	long	res;
-	long	tmp;
 
 	i = 0;
 	sign = 1;
 	res = 0;
-	tmp = 0;
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		i++;
 	if (str[i] == '-' || str[i] == '+')

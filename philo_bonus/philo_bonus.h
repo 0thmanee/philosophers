@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:43:03 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/27 03:02:59 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/27 03:10:39 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,9 @@
 # include <stdlib.h>
 # include <limits.h>
 # include <signal.h>
+# include <fcntl.h>
 # include <sys/time.h>
+# include <sys/wait.h>
 
 typedef struct s_fork
 {
