@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:42:06 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/27 01:15:08 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/27 03:02:15 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,6 @@ void	*watcher_routine(void *philos)
 				calc_time_diff(philo->prog), philo->philo_id);
 			sem_post(philo->prog->data);
 			exit(EXIT_FAILURE);
-		}
-		if (philo->prog->eating_times != -1
-			&& philo->eats >= philo->prog->eating_times)
-		{
-			sem_post(philo->prog->data);
-			exit(EXIT_SUCCESS);
 		}
 		sem_post(philo->prog->data);
 	}
@@ -65,16 +59,36 @@ int	start_routine(t_philo *philos, int id)
 
 int	start_child_process(t_philo *philo, int index)
 {
+	if (index % 2)
+		custom_usleep(philo->prog->t_t_eat);
 	if (!start_routine(philo, index))
 		return (0);
-	if (index % 2)
-		custom_usleep(2);
 	return (1);
+}
+
+void	wait_processes(t_program prog)
+{
+	int	i;
+	int	status;
+
+	i = 0;
+	while (i < prog.nbr_philos)
+	{
+		waitpid(-1, &status, 0);
+		if (status >> 8 == 0)
+			i++;
+		else if (status >> 8 == 1)
+		{
+			i = -1;
+			while (++i < prog.nbr_philos)
+				kill(prog.childs_id[i], SIGINT);
+			break ;
+		}
+	}
 }
 
 void	start_sumulation(t_program	prog, t_philo *philos, int i)
 {
-	int			status;
 	int			id;
 
 	while (++i < prog.nbr_philos)
@@ -87,37 +101,6 @@ void	start_sumulation(t_program	prog, t_philo *philos, int i)
 		else if (id != 0)
 			prog.childs_id[i] = id;
 	}
-	i = -1;
-	while (++i < prog.nbr_philos)
-	{
-		waitpid(prog.childs_id[i], &status, 0);
-		if (status)
-		{
-			i = -1;
-			while (i++ < prog.nbr_philos)
-				kill(prog.childs_id[i], SIGINT);
-		}
-	}
-	exit(EXIT_SUCCESS);
-}
-
-int	main(int ac, char *av[])
-{
-	t_program	data;
-	t_philo		*philos;
-	int			i;
-
-	(1 == 1) && (check_args(ac, av), data = init_data(ac, av),
-		philos = init_philos(data), data.childs_id = NULL);
-	if (!philos)
-		exit(EXIT_FAILURE);
-	data.childs_id = malloc(data.nbr_philos * sizeof(int));
-	if (!data.childs_id)
-		exit(EXIT_FAILURE);
-	start_sumulation(data, philos, -1);
-	i = -1;
-	while (i++ < data.nbr_philos)
-		kill(data.childs_id[i], SIGINT);
-	cleanup(data);
-	exit(EXIT_SUCCESS);
+	i = 0;
+	wait_processes(prog);
 }

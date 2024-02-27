@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:43:03 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/27 01:08:15 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/27 03:02:59 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,10 @@ void		eating(t_philo *philo);
 void		sleeping(t_philo *philo);
 void		thinking(t_philo *philo);
 void		cleanup(t_program data);
+void		*watcher_routine(void *philos);
+int			start_routine(t_philo *philos, int id);
+int			start_child_process(t_philo *philo, int index);
+void		wait_processes(t_program prog);
+void		start_sumulation(t_program	prog, t_philo *philos, int i);
 
 #endif

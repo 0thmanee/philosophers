@@ -1,9 +1,9 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread
+CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
 NAME = philo_bonus
-CFILES = philo_bonus.c philo_tools_1_bonus.c philo_init_bonus.c philo_parsing_bonus.c philo_routine_bonus.c
+CFILES = main_bonus.c philo_bonus.c philo_tools_1_bonus.c philo_init_bonus.c philo_parsing_bonus.c philo_routine_bonus.c
 OFILES = $(CFILES:.c=.o)
 INCLUDES = philo_bonus.h
 
