@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:42:06 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/26 06:18:43 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/27 01:15:08 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,23 +22,29 @@ void	*watcher_routine(void *philos)
 		sem_wait(philo->prog->data);
 		if (curr_time() - philo->last_meal >= philo->prog->t_t_die)
 		{
+			sem_wait(philo->prog->dead);
 			*(philo->dead) = 1;
+			sem_post(philo->prog->dead);
 			custom_printf(philo, "died",
 				calc_time_diff(philo->prog), philo->philo_id);
+			sem_post(philo->prog->data);
 			exit(EXIT_FAILURE);
 		}
-		if (philo->prog->eating_times != -1 &&
-			philo->eats >= philo->prog->eating_times)
+		if (philo->prog->eating_times != -1
+			&& philo->eats >= philo->prog->eating_times)
+		{
+			sem_post(philo->prog->data);
 			exit(EXIT_SUCCESS);
+		}
 		sem_post(philo->prog->data);
 	}
 	return (NULL);
 }
 
-int	start_simulation(t_philo *philos, int id)
+int	start_routine(t_philo *philos, int id)
 {
 	if (pthread_create(&(philos[id].thread), NULL,
-		watcher_routine, (void *)philos))
+			watcher_routine, (void *)philos))
 		return (0);
 	pthread_detach(philos[id].thread);
 	while (1)
@@ -53,23 +59,20 @@ int	start_simulation(t_philo *philos, int id)
 		thinking(philos);
 		eating(philos);
 		sleeping(philos);
-		if (philos->prog->eating_times != -1 &&
-		philos->eats >= philos->prog->eating_times)
-		exit(EXIT_FAILURE);
 	}
 	return (1);
 }
 
 int	start_child_process(t_philo *philo, int index)
 {
-	if (!start_simulation(philo, index))
-		return 0;
+	if (!start_routine(philo, index))
+		return (0);
 	if (index % 2)
-		custom_usleep(1);
-	return 1;
+		custom_usleep(2);
+	return (1);
 }
 
-void start_sumulation(t_program	prog, t_philo *philos, int i)
+void	start_sumulation(t_program	prog, t_philo *philos, int i)
 {
 	int			status;
 	int			id;
@@ -115,5 +118,6 @@ int	main(int ac, char *av[])
 	i = -1;
 	while (i++ < data.nbr_philos)
 		kill(data.childs_id[i], SIGINT);
+	cleanup(data);
 	exit(EXIT_SUCCESS);
 }

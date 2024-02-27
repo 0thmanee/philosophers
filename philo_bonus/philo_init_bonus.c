@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:48:43 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/26 05:15:10 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/27 00:49:28 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ t_program	init_data(int ac, char *av[])
 	sem_unlink("message");
 	sem_unlink("data");
 	sem_unlink("eating_times");
-	sem_unlink("stop");
+	sem_unlink("dead");
 	data.forks = sem_open("forks", O_CREAT, 0600, data.nbr_philos);
 	data.message = sem_open("message", O_CREAT, 0600, 1);
 	data.data = sem_open("data", O_CREAT, 0600, 1);
 	data.eating = sem_open("eating_times", O_CREAT, 0600, 0);
-	data.eating = sem_open("stop", O_CREAT, 0600, 1);
+	data.eating = sem_open("dead", O_CREAT, 0600, 1);
 	return (data);
 }
 
@@ -43,6 +43,7 @@ t_philo	*init_philos(t_program data)
 {
 	int		i;
 	t_philo	*philos;
+
 	philos = malloc(data.nbr_philos * sizeof(t_philo));
 	if (!philos)
 		return (NULL);

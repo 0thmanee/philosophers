@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:43:03 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/25 18:25:59 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/27 01:08:15 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ typedef struct s_fork
 	sem_t	sem_fork;
 }	t_fork;
 
-
 typedef struct s_program
 {
 	int				nbr_philos;
@@ -39,18 +38,16 @@ typedef struct s_program
 	sem_t			*message;
 	sem_t			*data;
 	sem_t			*eating;
-	sem_t			*stop;
+	sem_t			*dead;
 	pthread_t		eating_thread;
 	int				eating_times;
-	int 			session;
+	int				session;
 	int				*childs_id;
 }	t_program;
 
 typedef struct s_philo
 {
 	int			philo_id;
-	t_fork		*l_fork;
-	t_fork		*r_fork;
 	pthread_t	thread;
 	long long	last_meal;
 	t_program	*prog;
@@ -71,5 +68,6 @@ void		custom_printf(t_philo *philo, char *str, long long date, int id);
 void		eating(t_philo *philo);
 void		sleeping(t_philo *philo);
 void		thinking(t_philo *philo);
+void		cleanup(t_program data);
 
 #endif

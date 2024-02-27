@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 10:52:27 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/20 10:53:03 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/26 20:48:11 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,5 @@ void	custom_usleep(unsigned int time)
 
 	milli = curr_time();
 	while (curr_time() - milli < time)
-		;
+		usleep(500);
 }

@@ -6,7 +6,7 @@
 /*   By: obouchta <obouchta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 16:41:53 by obouchta          #+#    #+#             */
-/*   Updated: 2024/02/26 06:07:16 by obouchta         ###   ########.fr       */
+/*   Updated: 2024/02/27 01:08:04 by obouchta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ void	eating(t_philo *philo)
 	custom_printf(philo, "is eating",
 		calc_time_diff(philo->prog), philo->philo_id);
 	custom_usleep(philo->prog->t_t_eat);
-	sem_wait(philo->prog->data);
-	sem_post(philo->prog->data);
 	sem_post(philo->prog->forks);
 	sem_post(philo->prog->forks);
 }
@@ -60,4 +58,18 @@ void	thinking(t_philo *philo)
 {
 	custom_printf(philo, "is thinking",
 		calc_time_diff(philo->prog), philo->philo_id);
+}
+
+void	cleanup(t_program data)
+{
+	sem_close(data.forks);
+	sem_close(data.message);
+	sem_close(data.data);
+	sem_close(data.eating);
+	sem_close(data.dead);
+	unlink("forks");
+	unlink("message");
+	unlink("data");
+	unlink("eating");
+	unlink("dead");
 }
