@@ -103,7 +103,6 @@ int	main(int ac, char *av[])
 	t_program	data;
 	t_all		**prog_phils;
 	t_waiter	*waiter;
-	int			i;
 
 	if (!valid_args(ac, av))
 		return (1);
@@ -122,7 +121,6 @@ int	main(int ac, char *av[])
 		return (1);
 	if (!create_threads(prog_phils, data, waiter, 0))
 		return (1);
-	i = -1;
 	free_data(&data, waiter, prog_phils);
 	return (0);
 }

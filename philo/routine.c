@@ -80,9 +80,7 @@ void	thinking(t_all *prog_phils)
 void	*routine(void *data)
 {
 	t_all	*prog_phils;
-	int		end;
 
-	end = 0;
 	prog_phils = (t_all *)data;
 	while (1)
 	{
